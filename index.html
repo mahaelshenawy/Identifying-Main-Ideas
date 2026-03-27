@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Main Ideas - English Learning</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #dc2626;
+            --accent: #0ea5e9;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f1f5f9;
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .lms-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid var(--border);
+            padding: 2rem 0;
+            overflow-y: auto;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .progress-indicator {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .progress-stat {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-stat-label {
+            color: var(--text-muted);
+        }
+
+        .progress-stat-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .lesson-nav {
+            padding: 0 1.5rem;
+        }
+
+        .lesson-item {
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .lesson-item:hover {
+            background: var(--light);
+            color: var(--primary);
+        }
+
+        .lesson-item.active {
+            background: #dbeafe;
+            color: var(--primary);
+            border-left-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .lesson-item.completed::before {
+            content: "✓ ";
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .header-bar {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .header-meta {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .slide-wrapper {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            min-height: 600px;
+            padding: 3rem;
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide {
+            display: none;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        .slide h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .slide h3 {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .slide p {
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            color: #334155;
+        }
+
+        .slide ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .slide li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .definition-box {
+            background: #f0f9ff;
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 6px;
+        }
+
+        .image-section {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .image-section img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-height: 300px;
+        }
+
+        .image-caption {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .activity-section {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+
+        .question-text {
+            background: white;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 6px;
+            border-left: 4px solid var(--accent);
+            line-height: 1.8;
+        }
+
+        .options-container {
+            margin: 2rem 0;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem 1.5rem;
+            margin: 0.75rem 0;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-align: left;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: var(--dark);
+            position: relative;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            background: #f0f9ff;
+            transform: translateX(4px);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .option-btn.correct {
+            background: #dcfce7;
+            border-color: var(--success);
+            color: #166534;
+        }
+
+        .option-btn.correct::before {
+            content: "✓ ";
+            color: var(--success);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .option-btn.wrong {
+            background: #fee2e2;
+            border-color: var(--secondary);
+            color: #991b1b;
+        }
+
+        .option-btn.wrong::before {
+            content: "✗ ";
+            color: var(--secondary);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .option-btn.disabled-wrong {
+            background: #fafafa;
+            border-color: #d1d5db;
+            opacity: 0.5;
+        }
+
+        .feedback-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 6px;
+            display: none;
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        .feedback-box.show {
+            display: block;
+        }
+
+        .feedback-box.success {
+            background: #dcfce7;
+            border-left: 4px solid var(--success);
+            color: #166534;
+        }
+
+        .feedback-box.error {
+            background: #fee2e2;
+            border-left: 4px solid var(--secondary);
+            color: #991b1b;
+        }
+
+        .feedback-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .feedback-message {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .try-again-hint {
+            margin-top: 0.75rem;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .table th {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tr:nth-child(even) {
+            background: var(--light);
+        }
+
+        /* Navigation Buttons */
+        .nav-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: space-between;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #0284c7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Results Screen */
+        .results-screen {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .results-title {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .results-score {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--success);
+            margin: 2rem 0;
+        }
+
+        .results-message {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .results-details {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            display: inline-block;
+        }
+
+        .result-item {
+            font-size: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .result-item strong {
+            color: var(--primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .lms-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding: 1rem;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .slide-wrapper {
+                padding: 1.5rem;
+                min-height: auto;
+            }
+
+            .header-bar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .header-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .slide h2 {
+                font-size: 1.4rem;
+            }
+
+            .nav-controls {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="lms-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">📚 Main Ideas Mastery</div>
+            <div class="sidebar-subtitle">English Reading Comprehension</div>
+            <div class="progress-indicator">
+                <div class="progress-stat">
+                    <span class="progress-stat-label">Progress</span>
+                    <span class="progress-stat-value"><span id="currentSlide">1</span>/<span id="totalSlides">22</span></span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-stat" style="margin-top: 0.75rem;">
+                    <span class="progress-stat-label">Score</span>
+                    <span class="progress-stat-value"><span id="scoreDisplay">0</span>%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lesson-nav" id="lessonNav"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-bar">
+            <div class="header-title" id="headerTitle">Welcome to Main Ideas Mastery!</div>
+            <div class="header-meta">
+                <div><strong>Module:</strong> English Reading</div>
+                <div><strong>Difficulty:</strong> Beginner</div>
+            </div>
+        </div>
+
+        <div class="slide-wrapper">
+            <div id="slideContainer"></div>
+            <div class="nav-controls">
+                <button class="btn btn-secondary" id="prevBtn" onclick="prevSlide()" disabled>← Previous</button>
+                <button class="btn btn-primary" id="nextBtn" onclick="nextSlide()">Next →</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const slides = [
+        {
+            id: 'intro',
+            title: 'Welcome to Main Ideas Mastery!',
+            type: 'content',
+            content: `
+                <p>Learn to find the main idea using 5 powerful clues:</p>
+                <ul>
+                    <li><strong>1. Pictures</strong> - Visual clues about the topic and details</li>
+                    <li><strong>2. Titles</strong> - Often reveal what the reading is about</li>
+                    <li><strong>3. Topic Sentences</strong> - Usually the first sentence of a paragraph</li>
+                    <li><strong>4. Supporting Details</strong> - Information that proves the author's point</li>
+                    <li><strong>5. Repeated Words</strong> - Show what the author thinks is important</li>
+                </ul>
+                <p style="margin-top: 2rem; font-weight: bold; color: var(--accent);">Let's become reading experts!</p>
+            `
+        },
+        {
+            id: 'clue1',
+            title: 'Clue 1: Pictures Tell Stories',
+            type: 'content',
+            content: `
+                <div class="definition-box">
+                    <strong>Pictures:</strong> Visual images that show you what the reading is about (the topic) before you read. Pictures can also show supporting details.
+                </div>
+                <div class="image-section">
+                    <img src="images/intro_main_idea.png" alt="Reading and learning">
+                    <p class="image-caption">Pictures help us understand the main topic at a glance</p>
+                </div>
+                <h3>Important Tips About Pictures:</h3>
+                <ul>
+                    <li><strong>Position matters:</strong> A picture near the top or bottom usually shows the general topic</li>
+                    <li><strong>Specific details:</strong> A picture beside a paragraph usually goes with a specific detail</li>
+                    <li><strong>Visual clues:</strong> Look at what is happening in the picture to understand the main idea</li>
+                </ul>
+            `
+        },
+        {
+            id: 'clue2',
+            title: 'Clue 2: Titles Guide Us',
+            type: 'content',
+            content: `
+                <div class="definition-box">
+                    <strong>Title:</strong> The heading of a text that often tells you what the reading will be about.
+                </div>
+                <div class="image-section">
+                    <img src="images/clue2_titles.png" alt="Book title">
+                    <p class="image-caption">Titles are like signposts that guide us</p>
+                </div>
+                <h3>How Titles Help:</h3>
+                <ul>
+                    <li><strong>Non-fiction:</strong> Titles usually tell you exactly what the text is about</li>
+                    <li><strong>Fiction:</strong> Be careful! Titles in stories don't always help find the main idea</li>
+                    <li><strong>Example:</strong> A text titled "The Benefits of Exercise" tells you the topic immediately</li>
+                </ul>
+                <div class="definition-box" style="background: #fef3c7; border-left-color: var(--warning); margin-top: 1.5rem;">
+                    <strong>💡 Tip:</strong> Always read the title first. It's your first clue about what you will learn!
+                </div>
+            `
+        },
+        {
+            id: 'clue3',
+            title: 'Clue 3: Topic Sentences',
+            type: 'content',
+            content: `
+                <div class="definition-box">
+                    <strong>Topic Sentence:</strong> The first sentence of a paragraph that usually tells you the main idea of that paragraph.
+                </div>
+                <div class="image-section">
+                    <img src="images/clue3_topic_sentences.png" alt="Topic sentence">
+                    <p class="image-caption">The first sentence often contains the main idea</p>
+                </div>
+                <h3>Key Information:</h3>
+                <ul>
+                    <li><strong>Location:</strong> Usually found at the beginning of a paragraph</li>
+                    <li><strong>Scope:</strong> It is the main idea of ONE paragraph, not a whole book</li>
+                    <li><strong>General:</strong> Topic sentences are general statements, not specific details</li>
+                </ul>
+                <h3>Example:</h3>
+                <div class="definition-box" style="background: #fffacd; border-left-color: var(--warning);">
+                    <strong>"Coffee is one of the most popular drinks in the world."</strong><br><br>
+                    This is the topic sentence. The rest of the paragraph will explain why coffee is popular.
+                </div>
+            `
+        },
+        {
+            id: 'clue4',
+            title: 'Clue 4: Supporting Details',
+            type: 'content',
+            content: `
+                <div class="definition-box">
+                    <strong>Supporting Details:</strong> Information that proves the author's point and explains the main idea.
+                </div>
+                <div class="image-section">
+                    <img src="images/clue4_supporting_details.png" alt="Supporting details">
+                    <p class="image-caption">Details support and explain the main idea</p>
+                </div>
+                <h3>How to Find Supporting Details:</h3>
+                <ul>
+                    <li><strong>Collect the details:</strong> Write down all the specific information in the text</li>
+                    <li><strong>Look for patterns:</strong> Find a common theme among the details</li>
+                    <li><strong>They explain:</strong> Supporting details answer "Why?" "How?" or "What examples?"</li>
+                </ul>
+                <h3>Example:</h3>
+                <div class="definition-box" style="background: #fffacd; border-left-color: var(--warning);">
+                    <strong>Main Idea:</strong> Coffee is popular<br>
+                    <strong>Supporting Details:</strong>
+                    <ul style="margin-top: 0.5rem;">
+                        <li>It is grown in many countries</li>
+                        <li>People drink it in the morning</li>
+                        <li>It brings people together in cafes</li>
+                    </ul>
+                </div>
+            `
+        },
+        {
+            id: 'clue5',
+            title: 'Clue 5: Repeated Words',
+            type: 'content',
+            content: `
+                <div class="definition-box">
+                    <strong>Repeated Words:</strong> Words or phrases that appear multiple times in a text. These words give clues about what the author thinks is most important.
+                </div>
+                <div class="image-section">
+                    <img src="images/clue5_repeated_words.png" alt="Repeated words">
+                    <p class="image-caption">Repeated words show what is important</p>
+                </div>
+                <h3>How to Use Repeated Words:</h3>
+                <ul>
+                    <li><strong>Look throughout:</strong> Check the beginning, middle, and end of the text</li>
+                    <li><strong>Count them:</strong> The more a word repeats, the more important it is</li>
+                    <li><strong>Ask why:</strong> "Why does the author keep mentioning this word?"</li>
+                </ul>
+                <h3>Example:</h3>
+                <div class="definition-box" style="background: #fffacd; border-left-color: var(--warning);">
+                    "Exercise is important. Regular exercise strengthens your heart. Exercise improves mental health. Daily exercise is recommended."<br><br>
+                    The word <strong>"exercise"</strong> is repeated 4 times! This tells us that <strong>exercise is the main topic</strong>.
+                </div>
+            `
+        },
+        {
+            id: 'summary',
+            title: 'Using All 5 Clues Together',
+            type: 'content',
+            content: `
+                <p>When you read, use these clues together to find the main idea:</p>
+                <table class="table">
+                    <tr>
+                        <th>Clue</th>
+                        <th>What to Look For</th>
+                    </tr>
+                    <tr>
+                        <td><strong>1. Picture</strong></td>
+                        <td>Visual representation of the topic or details</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2. Title</strong></td>
+                        <td>The heading that introduces the subject</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. Topic Sentence</strong></td>
+                        <td>First sentence of a paragraph (usually the main idea)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4. Supporting Details</strong></td>
+                        <td>Specific information that explains the main idea</td>
+                    </tr>
+                    <tr>
+                        <td><strong>5. Repeated Words</strong></td>
+                        <td>Words that appear multiple times (show importance)</td>
+                    </tr>
+                </table>
+                <div class="definition-box" style="background: #fef3c7; border-left-color: var(--warning); margin-top: 1.5rem;">
+                    <strong>🎯 Strategy:</strong> Don't rely on just one clue. Use all 5 together for the best results!
+                </div>
+            `
+        },
+        {
+            id: 'activity1',
+            title: 'Activity 1: Using Pictures as Clues',
+            type: 'quiz',
+            image: 'images/activity1_healthy_food.png',
+            imageCaption: 'What does this picture tell you?',
+            question: '"Eating healthy foods is important for your body. Fruits and vegetables give you vitamins and energy. Whole grains help your digestion. Protein builds strong muscles. Water keeps you hydrated."',
+            questionPrompt: 'Based on the picture and text, what is the main idea?',
+            options: [
+                { text: 'Healthy eating is important for your body.', correct: true, feedback: 'Correct! The picture shows healthy food, and the text explains why eating healthy is important.' },
+                { text: 'Fruits and vegetables give you vitamins.', correct: false, feedback: 'This is a supporting detail, not the main idea.' },
+                { text: 'Whole grains help your digestion.', correct: false, feedback: 'This is just one type of food mentioned.' },
+                { text: 'Water keeps you hydrated.', correct: false, feedback: 'This is a supporting detail.' }
+            ]
+        },
+        {
+            id: 'activity2',
+            title: 'Activity 2: Using Titles as Clues',
+            type: 'quiz',
+            question: '<strong>Title: "Why Sleep is Essential for Your Health"</strong><br><br>Sleep is one of the most important things your body needs. When you sleep, your brain rests and processes information from the day. Your body repairs muscles and cells during sleep. Sleep helps your immune system fight diseases. People who sleep well have better concentration and memory. Doctors recommend 7-9 hours of sleep each night.',
+            questionPrompt: 'What does the title tell you about the main idea?',
+            options: [
+                { text: 'The main idea is about why sleep is important for health.', correct: true, feedback: 'Correct! The title directly tells us the main idea is about the importance of sleep for health.' },
+                { text: 'The main idea is about sleep.', correct: false, feedback: 'The title is more specific than just sleep itself.' },
+                { text: 'The main idea is about how much sleep you need.', correct: false, feedback: 'This is a supporting detail mentioned in the text.' },
+                { text: 'The main idea is about dreams during sleep.', correct: false, feedback: 'This is not mentioned in the title.' }
+            ]
+        },
+        {
+            id: 'activity3',
+            title: 'Activity 3: Finding Topic Sentences',
+            type: 'quiz',
+            question: '"Technology has changed education in amazing ways. Students can now learn from anywhere in the world using computers and tablets. Teachers use videos and interactive programs to make lessons more interesting. Online classes allow students to study at their own pace. Digital libraries give students access to millions of books instantly. Technology helps students with disabilities learn more easily."',
+            questionPrompt: 'Which sentence is the topic sentence?',
+            options: [
+                { text: 'Technology has changed education in amazing ways.', correct: true, feedback: 'Correct! This is the first sentence and it introduces the main idea of the paragraph.' },
+                { text: 'Students can now learn from anywhere in the world.', correct: false, feedback: 'This is a supporting detail about one benefit.' },
+                { text: 'Teachers use videos and interactive programs.', correct: false, feedback: 'This is a supporting detail about teachers.' },
+                { text: 'Digital libraries give students access to millions of books.', correct: false, feedback: 'This is a supporting detail about digital libraries.' }
+            ]
+        },
+        {
+            id: 'activity4',
+            title: 'Activity 4: Identifying Supporting Details',
+            type: 'quiz',
+            question: '"Rainforests are home to incredible biodiversity. Scientists estimate that half of all animal species on Earth live in rainforests. Rainforests contain thousands of plant species that have never been studied. Many medicines come from rainforest plants. The rainforest is also home to indigenous peoples who have lived there for thousands of years. Unfortunately, rainforests are disappearing at an alarming rate due to deforestation."',
+            questionPrompt: 'Which statement is NOT a supporting detail?',
+            options: [
+                { text: 'Half of all animal species live in rainforests.', correct: false, feedback: 'This is a supporting detail showing why rainforests are important.' },
+                { text: 'Rainforests contain thousands of plant species.', correct: false, feedback: 'This is a supporting detail about plant diversity.' },
+                { text: 'Rainforests are home to incredible biodiversity.', correct: true, feedback: 'Correct! This is the topic sentence (main idea), not a supporting detail.' },
+                { text: 'Many medicines come from rainforest plants.', correct: false, feedback: 'This is a supporting detail about medicines.' }
+            ]
+        },
+        {
+            id: 'activity5',
+            title: 'Activity 5: Finding Repeated Words',
+            type: 'quiz',
+            question: '"Reading is one of the most important skills you can develop. Reading improves your vocabulary and helps you learn new things. When you read regularly, you develop better concentration and focus. Reading also opens your imagination and takes you to different worlds. Many successful people credit their success to reading books. The habit of reading can change your future and make you a better person."',
+            questionPrompt: 'What word is repeated most often, and what does this tell us?',
+            options: [
+                { text: 'Reading - This tells us that reading is the main topic.', correct: true, feedback: 'Correct! "Reading" appears 6 times, showing it is the main topic the author emphasizes.' },
+                { text: 'Important - This shows the main idea.', correct: false, feedback: 'While "important" appears, it is not the most repeated word.' },
+                { text: 'Imagination - This is the key to understanding the paragraph.', correct: false, feedback: 'This word appears only once.' },
+                { text: 'Books - This is what the author emphasizes most.', correct: false, feedback: 'This word does not appear in the paragraph.' }
+            ]
+        },
+        {
+            id: 'activity6',
+            title: 'Activity 6: Using Multiple Clues',
+            type: 'quiz',
+            question: '<strong>Title: "The Importance of Teamwork"</strong><br><br>Teamwork is essential for success in sports, school, and work. When people work together, they can accomplish more than working alone. Teams share different skills and ideas to solve problems. Communication between team members is crucial. Good teamwork builds trust and friendship among people. Companies that encourage teamwork have happier and more productive employees.',
+            questionPrompt: 'What clues help you find the main idea? (Choose the best answer)',
+            options: [
+                { text: 'The title, topic sentence, and repeated word "teamwork" all support the same main idea.', correct: true, feedback: 'Correct! The title, first sentence, and repeated word "teamwork" all point to the same main idea.' },
+                { text: 'Only the title tells us the main idea.', correct: false, feedback: 'This is only one clue, not the best answer.' },
+                { text: 'Only the supporting details show the main idea.', correct: false, feedback: 'Supporting details alone do not give us the main idea.' },
+                { text: 'We can only use one clue to find the main idea.', correct: false, feedback: 'We need to use multiple clues together.' }
+            ]
+        },
+        {
+            id: 'activity7',
+            title: 'Activity 7: Complex Paragraph Analysis',
+            type: 'quiz',
+            question: '<strong>Title: "Climate Change: A Global Challenge"</strong><br><br>Climate change is one of the most pressing challenges facing humanity today. Rising global temperatures are causing glaciers to melt and sea levels to rise. Extreme weather events like hurricanes, droughts, and floods are becoming more frequent and severe. Scientists warn that if we do not take action soon, the consequences will be catastrophic for future generations. Renewable energy sources like solar and wind power offer hope for reducing carbon emissions. Many countries are investing in green technology and sustainable practices to combat climate change. Individual actions, such as reducing plastic use and conserving energy, also contribute to solving this global problem.',
+            questionPrompt: 'Using all 5 clues, what is the main idea?',
+            options: [
+                { text: 'Climate change is a serious global challenge that requires action from everyone.', correct: true, feedback: 'Correct! The title, topic sentence, and repeated word "climate change" all show this is the main idea.' },
+                { text: 'Glaciers are melting and sea levels are rising.', correct: false, feedback: 'This is a supporting detail showing one consequence.' },
+                { text: 'Renewable energy sources can reduce carbon emissions.', correct: false, feedback: 'This is a supporting detail about solutions.' },
+                { text: 'Extreme weather events are becoming more severe.', correct: false, feedback: 'This is a supporting detail about weather.' }
+            ]
+        },
+        {
+            id: 'activity8',
+            title: 'Activity 8: Picture + Text Analysis',
+            type: 'quiz',
+            image: 'images/activity8_recycling.png',
+            imageCaption: 'What does this picture suggest?',
+            question: '<strong>Title: "Why Recycling Matters"</strong><br><br>Recycling is one of the easiest ways to help the environment. When we recycle, we reduce the amount of waste in landfills. Recycling saves natural resources like trees and water. It also requires less energy to make products from recycled materials than from new raw materials. Recycling creates jobs in communities. Every person can make a difference by recycling plastic, paper, and metal.',
+            questionPrompt: 'Which clues help identify the main idea?',
+            options: [
+                { text: 'The picture, title, and topic sentence all point to recycling as the main topic.', correct: true, feedback: 'Correct! The picture, title, and topic sentence all show that recycling is the main topic.' },
+                { text: 'Only the picture tells us the main idea.', correct: false, feedback: 'The picture is important, but we need more clues.' },
+                { text: 'Only the supporting details show the main idea.', correct: false, feedback: 'Supporting details alone do not give the main idea.' },
+                { text: 'We can only use the title to find the main idea.', correct: false, feedback: 'We need to use multiple clues together.' }
+            ]
+        },
+        {
+            id: 'activity9',
+            title: 'Activity 9: Main Idea vs. Supporting Details',
+            type: 'quiz',
+            question: '"Social media has become an important part of modern life. Platforms like Facebook, Instagram, and Twitter connect billions of people worldwide. Social media allows people to share their lives and stay in touch with friends and family. Businesses use social media to reach customers and advertise their products. Activists use social media to spread awareness about important issues. Communities use social media to organize events and support each other. However, social media can also be addictive and affect mental health if used too much."',
+            questionPrompt: 'Which statement best summarizes the main idea?',
+            options: [
+                { text: 'Social media has become an important part of modern life with many different uses.', correct: true, feedback: 'Correct! This captures the overall message that social media is important and has many uses.' },
+                { text: 'Platforms like Facebook and Instagram connect people worldwide.', correct: false, feedback: 'This is a supporting detail about one use.' },
+                { text: 'Businesses use social media to reach customers.', correct: false, feedback: 'This is a supporting detail about one benefit.' },
+                { text: 'Social media can be addictive and affect mental health.', correct: false, feedback: 'This is a supporting detail about a concern.' }
+            ]
+        },
+        {
+            id: 'activity10',
+            title: 'Activity 10: Final Comprehensive Challenge',
+            type: 'quiz',
+            image: 'images/activity10_ai.png',
+            imageCaption: 'Technology is changing our world',
+            question: '<strong>Title: "How Artificial Intelligence is Transforming Society"</strong><br><br>Artificial Intelligence (AI) is revolutionizing industries and transforming the way we live and work. AI technology can recognize faces, understand language, and make predictions with remarkable accuracy. In healthcare, AI is helping doctors diagnose diseases earlier and develop new treatments. Manufacturing companies use AI robots to increase productivity and reduce errors. Customer service departments use AI chatbots to answer questions 24/7. AI is also being used in education to personalize learning for each student. However, the rapid advancement of AI also raises important questions about job displacement, privacy, and ethical concerns. Society must develop clear regulations to ensure AI is used responsibly and benefits everyone.',
+            questionPrompt: 'What is the main idea, considering all 5 clues?',
+            options: [
+                { text: 'AI is transforming society in many ways, but we must address ethical concerns.', correct: true, feedback: 'Correct! The picture, title, repeated word "AI," topic sentence, and supporting details all show this is the main idea.' },
+                { text: 'AI is technology.', correct: false, feedback: 'This is too general and misses the main point.' },
+                { text: 'AI helps doctors diagnose diseases.', correct: false, feedback: 'This is a supporting detail about one application.' },
+                { text: 'AI raises questions about job displacement and privacy.', correct: false, feedback: 'This is a supporting detail about a concern.' }
+            ]
+        },
+        {
+            id: 'strategy',
+            title: 'Your Reading Strategy',
+            type: 'content',
+            content: `
+                <h3>When you read, follow these steps:</h3>
+                <ol>
+                    <li><strong>Step 1:</strong> Look at the picture (if there is one). What does it show?</li>
+                    <li><strong>Step 2:</strong> Read the title. What is the text about?</li>
+                    <li><strong>Step 3:</strong> Read the first sentence (topic sentence). What is the main idea?</li>
+                    <li><strong>Step 4:</strong> Look for repeated words. What does the author emphasize?</li>
+                    <li><strong>Step 5:</strong> Identify supporting details. How do they explain the main idea?</li>
+                    <li><strong>Step 6:</strong> Ask yourself: "What is this mostly about?" This is your main idea!</li>
+                </ol>
+                <div class="definition-box" style="background: #dcfce7; border-left-color: var(--success); margin-top: 1.5rem;">
+                    <strong>✅ Remember:</strong> Use all 5 clues together. They work as a team to help you find the main idea!
+                </div>
+            `
+        },
+        {
+            id: 'tips',
+            title: 'Tips for Success',
+            type: 'content',
+            content: `
+                <div class="image-section">
+                    <img src="images/tips_success.png" alt="Success">
+                    <p class="image-caption">You can master this skill!</p>
+                </div>
+                <ul>
+                    <li><strong>🎯 Read actively:</strong> Don't just read passively. Think about what you're reading.</li>
+                    <li><strong>🔍 Mark repeated words:</strong> Highlight or underline words that appear multiple times.</li>
+                    <li><strong>📝 Take notes:</strong> Write down the main idea and supporting details as you read.</li>
+                    <li><strong>🤔 Ask questions:</strong> Always ask yourself "What is this mostly about?"</li>
+                    <li><strong>🔄 Practice regularly:</strong> The more you practice, the easier it becomes!</li>
+                    <li><strong>📚 Read different texts:</strong> Practice with news, stories, and educational materials.</li>
+                </ul>
+            `
+        },
+        {
+            id: 'vocabulary',
+            title: 'Vocabulary Review',
+            type: 'content',
+            content: `
+                <table class="table">
+                    <tr>
+                        <th>Term</th>
+                        <th>Definition</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Main Idea</strong></td>
+                        <td>The most important point or central message of a text</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Topic</strong></td>
+                        <td>What the text is generally about (usually 1-2 words)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Topic Sentence</strong></td>
+                        <td>The first sentence of a paragraph that states the main idea</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Supporting Details</strong></td>
+                        <td>Information that proves and explains the main idea</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Summarize</strong></td>
+                        <td>To give a short version of the main points</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Clue</strong></td>
+                        <td>Information that helps you find or understand something</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Repeated Words</strong></td>
+                        <td>Words that appear multiple times, showing importance</td>
+                    </tr>
+                </table>
+            `
+        },
+        {
+            id: 'conclusion',
+            title: '🎓 Congratulations!',
+            type: 'content',
+            content: `
+                <div class="image-section">
+                    <img src="images/clue1_pictures.png" alt="Success">
+                    <p class="image-caption">You are now a reading expert!</p>
+                </div>
+                <h3>You have learned:</h3>
+                <ul>
+                    <li>✓ How to use <strong>pictures</strong> as clues</li>
+                    <li>✓ How to use <strong>titles</strong> as clues</li>
+                    <li>✓ How to find <strong>topic sentences</strong></li>
+                    <li>✓ How to identify <strong>supporting details</strong></li>
+                    <li>✓ How to spot <strong>repeated words</strong></li>
+                    <li>✓ How to combine all 5 clues to find the main idea</li>
+                </ul>
+                <p style="margin-top: 2rem; font-size: 1.1rem; font-weight: bold; color: var(--success);">Keep practicing these skills every day. You will become an excellent reader!</p>
+            `
+        }
+    ];
+
+    let currentSlideIndex = 0;
+    let correctAnswers = 0;
+    let totalQuestions = 0;
+
+    function initializeApp() {
+        renderSlide();
+        generateLessonNav();
+        updateProgress();
+    }
+    function randomizeArray(arr) {
+        const shuffled = [...arr];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
+
+    function renderSlide() {
+        const slide = slides[currentSlideIndex];
+        const container = document.getElementById('slideContainer');
+        container.innerHTML = '';
+
+        const slideDiv = document.createElement('div');
+        slideDiv.className = 'slide active';
+
+        let html = `<h2>${slide.title}</h2>`;
+
+        if (slide.type === 'content') {
+            html += slide.content;
+        } else if (slide.type === 'quiz') {
+            html += '<div class="activity-section">';
+            
+            if (slide.image) {
+                html += `
+                    <div class="image-section">
+                        <img src="${slide.image}" alt="${slide.imageCaption}">
+                        <p class="image-caption">${slide.imageCaption}</p>
+                    </div>
+                `;
+            }
+
+            html += `
+                <div class="question-text">${slide.question}</div>
+                <h3>${slide.questionPrompt}</h3>
+                <div class="options-container" id="optionsContainer">
+            `;
+
+            // Randomize options
+            const randomizedOptions = randomizeArray(slide.options);
+            randomizedOptions.forEach((option, index) => {
+                html += `
+                    <button class="option-btn" onclick="selectAnswer(${option.correct}, '${option.feedback.replace(/'/g, "\\'")}')">\n                        ${option.text}
+                    </button>
+                `;
+            });
+
+            html += `
+                </div>
+                <div class="feedback-box" id="feedbackBox"></div>
+            </div>
+            `;
+        }
+
+        slideDiv.innerHTML = html;
+        container.appendChild(slideDiv);
+
+        document.getElementById('headerTitle').textContent = slide.title;
+        updateNavButtons();
+    }
+
+    function selectAnswer(isCorrect, feedback) {
+        const buttons = document.querySelectorAll('.option-btn');
+        const feedbackBox = document.getElementById('feedbackBox');
+        const clickedBtn = event.target;
+
+        if (isCorrect) {
+            correctAnswers++;
+            totalQuestions++;
+            clickedBtn.classList.add('correct');
+            buttons.forEach((btn) => {
+                btn.disabled = true;
+            });
+
+            feedbackBox.className = 'feedback-box show success';
+            feedbackBox.innerHTML = `
+                <div class="feedback-title">✓ Correct!</div>
+                <div class="feedback-message">${feedback}</div>
+            `;
+
+            setTimeout(() => {
+                nextSlide();
+            }, 3500);
+        } else {
+            totalQuestions++;
+            clickedBtn.classList.add('wrong');
+            clickedBtn.disabled = true;
+
+            feedbackBox.className = 'feedback-box show error';
+            feedbackBox.innerHTML = `
+                <div class="feedback-title">✗ Not Quite Right</div>
+                <div class="feedback-message">${feedback}</div>
+                <div class="try-again-hint">💡 Try another option!</div>
+            `;
+
+            setTimeout(() => {
+                clickedBtn.classList.remove('wrong');
+            }, 2000);
+        }
+
+        updateProgress();
+    }
+
+    function nextSlide() {
+        if (currentSlideIndex < slides.length - 1) {
+            currentSlideIndex++;
+            renderSlide();
+            window.scrollTo(0, 0);
+        } else {
+            showResults();
+        }
+    }
+
+    function prevSlide() {
+        if (currentSlideIndex > 0) {
+            currentSlideIndex--;
+            renderSlide();
+            window.scrollTo(0, 0);
+        }
+    }
+
+    function updateNavButtons() {
+        document.getElementById('prevBtn').disabled = currentSlideIndex === 0;
+        document.getElementById('nextBtn').textContent = currentSlideIndex === slides.length - 1 ? 'Finish' : 'Next →';
+    }
+
+    function updateProgress() {
+        const progress = (currentSlideIndex / (slides.length - 1)) * 100;
+        document.getElementById('progressFill').style.width = progress + '%';
+        document.getElementById('currentSlide').textContent = currentSlideIndex + 1;
+        
+        if (totalQuestions > 0) {
+            const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+            document.getElementById('scoreDisplay').textContent = percentage;
+        }
+    }
+
+    function generateLessonNav() {
+        const nav = document.getElementById('lessonNav');
+        slides.forEach((slide, index) => {
+            const item = document.createElement('div');
+            item.className = 'lesson-item' + (index === 0 ? ' active' : '');
+            item.textContent = slide.title;
+            item.onclick = () => goToSlide(index);
+            nav.appendChild(item);
+        });
+    }
+
+    function goToSlide(index) {
+        currentSlideIndex = index;
+        renderSlide();
+        updateProgress();
+        window.scrollTo(0, 0);
+    }
+
+    function showResults() {
+        const container = document.getElementById('slideContainer');
+        const percentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+        
+        let message = '';
+        if (percentage === 100) {
+            message = 'Perfect! You are a reading master! 🌟';
+        } else if (percentage >= 80) {
+            message = 'Excellent work! You have strong reading skills! 🎉';
+        } else if (percentage >= 60) {
+            message = 'Good job! Keep practicing to improve! 📚';
+        } else {
+            message = 'Keep practicing! Reading skills improve with time! 💪';
+        }
+
+        container.innerHTML = `
+            <div class="results-screen">
+                <div class="results-title">Course Complete!</div>
+                <div class="results-score">${percentage}%</div>
+                <div class="results-message">${message}</div>
+                <div class="results-details">
+                    <div class="result-item">Correct Answers: <strong>${correctAnswers} / ${totalQuestions}</strong></div>
+                    <div class="result-item">Slides Completed: <strong>${slides.length}</strong></div>
+                </div>
+                <button class="btn btn-primary" onclick="location.reload()" style="margin-top: 2rem;">Start Over</button>
+            </div>
+        `;
+
+        document.getElementById('headerTitle').textContent = 'Course Complete!';
+        document.getElementById('prevBtn').style.display = 'none';
+        document.getElementById('nextBtn').style.display = 'none';
+    }
+
+    initializeApp();
+</script>
+
+</body>
+</html>
